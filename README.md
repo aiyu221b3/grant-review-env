@@ -10,6 +10,8 @@ base_path: /web
 
 # 🏛️ Grant Proposal Review Environment
 
+> **🚀 [Click here to view the live environment on Hugging Face Spaces](https://huggingface.co/spaces/aiyu221b3/grant-review-env)**
+> 
 <div align="center">
 
 **OpenEnv Hackathon — Meta × Scaler | April 2026**
