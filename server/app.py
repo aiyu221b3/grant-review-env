@@ -1,0 +1,15 @@
+
+import uvicorn
+from openenv_core.env_server import create_app
+from environment.env import GrantReviewEnv
+from environment.models import GrantReviewAction, GrantProposalObservation
+
+env = GrantReviewEnv(task_name="easy")
+app = create_app(env, GrantReviewAction, GrantProposalObservation)
+
+def main():
+    uvicorn.run("server.app:app", host="0.0.0.0", port=8000)
+
+if __name__ == '__main__':
+    main()
+EOF

@@ -1,0 +1,48 @@
+{
+  "title": "Federated Learning Framework for Privacy-Preserving Mental Health Monitoring via Smartphone Sensors",
+  "abstract": "This proposal develops a federated learning system that monitors early indicators of depression and anxiety using passive smartphone sensor data — screen time patterns, typing cadence, GPS mobility, and sleep proxies — without transmitting raw personal data. The system trains local models on-device and aggregates only gradient updates. We target college students aged 18-24, a population with high mental health burden and low clinical engagement. The system will be piloted across three universities with 800 student participants. We request funding for system development, clinical validation, and ethical framework development.",
+  "requested_amount": 120000.00,
+  "difficulty": "medium",
+  "methodology_full": "We will collect passive sensor data from student smartphones with informed consent. A federated learning pipeline will be implemented using PySyft. Models will be validated against PHQ-9 and GAD-7 clinical scales administered monthly. Privacy guarantees will be formalized using differential privacy with epsilon=0.5.\n\nNOTE FOR GRADER: This methodology section has a critical flaw. There is no description of how ground truth labels will be collected between monthly PHQ-9 administrations. The model trains continuously on passive data but clinical validation happens only monthly — creating a labeling gap that makes the validation methodology scientifically unsound. The agent should detect this gap.",
+  "budget_full": {
+    "software_development_federated_pipeline": 32000.00,
+    "personnel_two_research_assistants_18_months": 45000.00,
+    "clinical_psychologist_consultant": 18000.00,
+    "participant_compensation_800_students": 16000.00,
+    "ethics_board_and_irb_fees": 4000.00,
+    "cloud_infrastructure_aggregation_server": 5000.00
+  },
+  "team_full": [
+    "Dr. Sameer Verma — PI, Associate Professor, Computer Science, IIT Delhi. Privacy-preserving ML specialist.",
+    "Dr. Ananya Krishnan — Co-PI, Clinical Psychologist, NIMHANS. Mental health assessment lead.",
+    "Mr. Rohit Patel — Research Assistant, M.Tech, federated learning implementation.",
+    "Ms. Deepa Srinivasan — Research Assistant, psychology background, participant coordination."
+  ],
+  "references_full": [
+    "Saeb S. et al. (2015). Mobile Phone Sensor Correlates of Depressive Symptom Severity. J Med Internet Res.",
+    "McMahan B. et al. (2017). Communication-Efficient Learning of Deep Networks from Decentralized Data. AISTATS.",
+    "Dwork C. (2006). Differential Privacy. ICALP.",
+    "Kroenke K. et al. (2001). The PHQ-9: Validity of a Brief Depression Severity Measure. J Gen Intern Med."
+  ],
+  "hidden_flaws": [
+    "methodology_labeling_gap: No ground truth labels between monthly PHQ-9 administrations. Continuous model training has no continuous supervision signal. Validation methodology is scientifically unsound."
+  ],
+  "should_be_funded": false,
+  "correct_score": 0.42,
+  "evaluation_criteria": {
+    "scientific_merit": 0.30,
+    "feasibility": 0.25,
+    "innovation": 0.20,
+    "team_qualifications": 0.15,
+    "budget_justification": 0.10
+  },
+  "clarification_map": {
+    "label": "We plan to use the monthly PHQ-9 scores as our primary ground truth labels for model evaluation.",
+    "ground truth": "Clinical validation is conducted monthly using standardized PHQ-9 and GAD-7 instruments.",
+    "training": "The federated models update continuously using the passive sensor features. Periodic clinical scores anchor the validation.",
+    "validation": "We validate model predictions against PHQ-9 scores at monthly intervals across the pilot period.",
+    "supervision": "Our approach uses self-supervised pre-training on sensor data with clinical scores as downstream evaluation.",
+    "methodology": "The methodology follows established practices in digital phenotyping research as described in Saeb et al. 2015."
+  },
+  "default_clarification": "The methodology has been carefully designed with input from our clinical co-investigator. We are happy to elaborate on any specific aspect."
+}

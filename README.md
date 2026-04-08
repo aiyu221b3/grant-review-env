@@ -1,10 +1,9 @@
 ---
 title: Grant Review Env
-emoji: 👀
+emoji: 📑
 colorFrom: blue
-colorTo: red
+colorTo: indigo
 sdk: docker
 pinned: false
+base_path: /web
 ---
-
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference

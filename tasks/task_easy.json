@@ -1,0 +1,45 @@
+{
+  "title": "AI-Assisted Early Detection of Diabetic Retinopathy in Rural Healthcare Settings",
+  "abstract": "This proposal presents a lightweight convolutional neural network system for early-stage diabetic retinopathy detection deployable on low-resource hardware in rural clinics. The system targets regions with limited ophthalmologist access, enabling community health workers to perform preliminary screenings. Preliminary validation on 3,200 fundus images shows 91% sensitivity and 88% specificity. We request funding to expand the dataset, conduct field trials across 12 rural clinics in West Bengal, and develop a training program for healthcare workers.",
+  "requested_amount": 85000.00,
+  "difficulty": "easy",
+  "methodology_full": "Phase 1 (Months 1-4): Dataset expansion via partnerships with three regional hospitals. Target: 15,000 annotated fundus images across all retinopathy severity grades. Phase 2 (Months 5-8): Model refinement using transfer learning from EfficientNet-B0 baseline. Optimization for inference on Raspberry Pi 4 hardware. Phase 3 (Months 9-12): Field deployment across 12 rural clinics in Bankura and Purulia districts. Community health worker training program — 2-day workshop per clinic. Phase 4 (Months 13-15): Outcome measurement, sensitivity/specificity validation against ophthalmologist ground truth, publication.",
+  "budget_full": {
+    "dataset_acquisition_and_annotation": 18000.00,
+    "hardware_raspberry_pi_units": 12000.00,
+    "personnel_research_assistant_12_months": 24000.00,
+    "field_trial_travel_and_logistics": 14000.00,
+    "healthcare_worker_training_program": 8000.00,
+    "publication_and_dissemination": 4000.00,
+    "institutional_overhead_10_percent": 5000.00
+  },
+  "team_full": [
+    "Dr. Priya Nair — PI, Assistant Professor, Biomedical Engineering, IIT Kharagpur. 8 years experience in medical imaging.",
+    "Dr. Ayan Mukherjee — Co-PI, Ophthalmologist, SSKM Hospital Kolkata. Clinical validation lead.",
+    "Ms. Ritika Das — Research Assistant, M.Tech Computer Science. CNN architecture and deployment.",
+    "Mr. Subhash Mondal — Field Coordinator, public health background, 5 years rural healthcare NGO experience."
+  ],
+  "references_full": [
+    "Gulshan V. et al. (2016). Development and Validation of a Deep Learning Algorithm for Detection of Diabetic Retinopathy. JAMA.",
+    "Ting D.S.W. et al. (2017). Development and Validation of a Deep Learning System for Diabetic Retinopathy. JAMA.",
+    "Abramoff M.D. et al. (2018). Pivotal trial of an autonomous AI-based diagnostic system for detection of diabetic retinopathy. NPJ Digital Medicine.",
+    "WHO (2023). Global Report on Diabetes. World Health Organization."
+  ],
+  "hidden_flaws": [],
+  "should_be_funded": true,
+  "correct_score": 0.88,
+  "evaluation_criteria": {
+    "scientific_merit": 0.30,
+    "feasibility": 0.25,
+    "innovation": 0.20,
+    "team_qualifications": 0.15,
+    "budget_justification": 0.10
+  },
+  "clarification_map": {
+    "timeline": "The 15-month timeline has been validated with our hospital partners who have confirmed data sharing agreements.",
+    "dataset": "We have IRB approval from all three partner hospitals. Data collection begins immediately upon funding.",
+    "hardware": "Raspberry Pi 4 was selected after benchmarking against Jetson Nano — inference time of 2.3 seconds per image is clinically acceptable.",
+    "overhead": "The 10% overhead is standard institutional rate as per DST guidelines."
+  },
+  "default_clarification": "Thank you for your question. We are happy to provide additional details upon request. Please feel free to ask specific questions about any aspect of the proposal."
+}

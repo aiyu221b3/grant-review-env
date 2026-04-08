@@ -1,0 +1,127 @@
+name: grant-review-env
+version: "1.0.0"
+description: >
+  A multi-turn grant proposal review environment where an AI agent learns
+  to evaluate research funding applications like a real funding committee.
+  The agent requests information strategically, detects hidden flaws in
+  proposals, and makes funding decisions under partial observability.
+  Features an adversarial applicant that withholds weaknesses unless probed.
+
+tags:
+  - openenv
+  - grant-review
+  - partial-observability
+  - multi-turn
+  - decision-making
+  - real-world
+
+author: "Tabula Rasa Team"
+license: MIT
+
+environment:
+  class: GrantReviewEnv
+  module: environment.env
+
+observation_space:
+  type: structured
+  description: >
+    Partial view of grant proposal. Agent starts with abstract only.
+    Additional sections unlocked via explicit action requests.
+  fields:
+    - name: abstract
+      type: string
+      always_visible: true
+    - name: title
+      type: string
+      always_visible: true
+    - name: requested_amount
+      type: float
+      always_visible: true
+    - name: methodology
+      type: string
+      nullable: true
+      unlocked_by: request_methodology
+    - name: budget_breakdown
+      type: object
+      nullable: true
+      unlocked_by: request_budget
+    - name: team_composition
+      type: array
+      nullable: true
+      unlocked_by: request_team
+    - name: references
+      type: array
+      nullable: true
+      unlocked_by: request_references
+    - name: clarification_response
+      type: string
+      nullable: true
+    - name: actions_remaining
+      type: integer
+    - name: sections_unlocked
+      type: array
+    - name: step_number
+      type: integer
+    - name: last_action_error
+      type: string
+      nullable: true
+    - name: evaluation_criteria
+      type: object
+
+action_space:
+  type: discrete
+  description: >
+    Agent can request proposal sections, ask clarification questions,
+    or make a final funding decision.
+  actions:
+    - request_methodology
+    - request_budget
+    - request_team
+    - request_references
+    - request_clarification
+    - approve
+    - reject
+
+reward:
+  type: dense
+  range: [-0.5, 1.5]
+  description: >
+    Partial progress signal throughout episode. Rewards information gain
+    from relevant section requests, penalizes redundant actions, and
+    provides final reward based on decision correctness and confidence.
+
+tasks:
+  - name: easy
+    description: >
+      Evaluate a complete, well-formed proposal with no hidden flaws.
+      Correct decision is APPROVE. Tests basic rubric application.
+    difficulty: easy
+    max_steps: 8
+    success_threshold: 0.5
+
+  - name: medium
+    description: >
+      Evaluate a proposal with a critical methodology flaw — missing
+      ground truth labels between validation intervals. Correct decision
+      is REJECT. Agent must request and read methodology section carefully.
+    difficulty: medium
+    max_steps: 8
+    success_threshold: 0.5
+
+  - name: hard
+    description: >
+      Evaluate a proposal with a hidden conflict of interest. PI holds
+      equity in a company that receives payment from the grant budget.
+      Only detectable by requesting BOTH budget AND team sections and
+      cross-referencing. Correct decision is REJECT.
+    difficulty: hard
+    max_steps: 8
+    success_threshold: 0.5
+
+inference:
+  script: inference.py
+  max_runtime_minutes: 20
+  required_env_vars:
+    - API_BASE_URL
+    - MODEL_NAME
+    - HF_TOKEN

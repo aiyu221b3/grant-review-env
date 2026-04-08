@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grant-review-env"
+version = "1.0.0"
+description = "Grant Proposal Review Environment"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "openenv-core>=0.2.0",
+    "pydantic",
+    "fastapi",
+    "uvicorn",
+    "openai"
+]
+
+[project.scripts]
+server = "server.app:main"

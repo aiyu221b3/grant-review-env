@@ -1,0 +1,54 @@
+{
+  "title": "Autonomous Drone Navigation in GPS-Denied Environments Using Neuromorphic Vision Sensors",
+  "abstract": "This proposal develops a real-time autonomous navigation system for UAVs operating in GPS-denied indoor and subterranean environments using event-based neuromorphic cameras and spiking neural networks. Unlike conventional frame-based vision, neuromorphic sensors capture asynchronous pixel-level changes with microsecond latency and near-zero motion blur — enabling robust navigation in smoke-filled, low-light, or electromagnetically contested environments. Applications include disaster response, mine inspection, and defence. We have demonstrated proof-of-concept navigation in a controlled 200m corridor. We request funding for hardware scaling, algorithm development, and field trials in three target environments.",
+  "requested_amount": 210000.00,
+  "difficulty": "hard",
+  "methodology_full": "Phase 1 (Months 1-6): Integration of Prophesee Metavision EVK4 event camera with DJI Matrice 300 RTK platform. Development of event-stream preprocessing pipeline for spiking neural network input. Phase 2 (Months 7-14): Training of spiking neural network navigation policy using surrogate gradient methods. Sim-to-real transfer using CARLA-adapted event camera simulation. Phase 3 (Months 15-20): Field trials across three environments — collapsed building simulation (IIT Bombay structural lab), active mine environment (CMPDI Dhanbad), indoor industrial facility (partner site TBD). Phase 4 (Months 21-24): Performance benchmarking, safety analysis, publication, and IP filing.",
+  "requested_amount_detail": "Budget covers hardware, personnel, field trial access fees, and IP filing costs across 24-month project duration.",
+  "budget_full": {
+    "neuromorphic_hardware_two_EVK4_units": 28000.00,
+    "drone_platform_DJI_Matrice_300": 22000.00,
+    "personnel_PI_partial_buyout_12_months": 36000.00,
+    "personnel_two_research_assistants_24_months": 58000.00,
+    "field_trial_access_CMPDI_Dhanbad": 15000.00,
+    "simulation_software_licenses": 8000.00,
+    "NeuralDrone_Pvt_Ltd_technology_transfer_fee": 24000.00,
+    "IP_filing_and_patent_costs": 9000.00,
+    "travel_and_dissemination": 6000.00,
+    "institutional_overhead_10_percent": 4000.00
+  },
+  "team_full": [
+    "Dr. Vikram Rao — PI, Associate Professor, Aerospace Engineering, IIT Bombay. Autonomous systems specialist. Director and 40% equity holder, NeuralDrone Pvt. Ltd.",
+    "Dr. Sunita Joshi — Co-PI, Electrical Engineering, IIT Bombay. Neuromorphic computing specialist.",
+    "Mr. Aditya Khanna — Research Assistant, M.Tech Robotics. Event camera integration.",
+    "Ms. Preethi Nair — Research Assistant, M.Tech Computer Science. Spiking neural network training."
+  ],
+  "references_full": [
+    "Gallego G. et al. (2022). Event-based Vision: A Survey. IEEE TPAMI.",
+    "Mahowald M. (1992). VLSI Analogs of Neuronal Visual Processing. Caltech PhD Thesis.",
+    "Davies M. et al. (2018). Loihi: A Neuromorphic Manycore Processor. IEEE Micro.",
+    "Pfeiffer M. & Pfeil T. (2018). Deep Learning With Spiking Neurons. Frontiers in Neuroscience."
+  ],
+  "hidden_flaws": [
+    "conflict_of_interest: PI Dr. Vikram Rao is a 40% equity holder and Director of NeuralDrone Pvt. Ltd. The budget includes a 24,000 USD technology transfer fee payable to NeuralDrone Pvt. Ltd. This creates a direct financial conflict of interest — public research funds would flow to a private company in which the PI holds significant equity. This is only detectable by cross-referencing the budget line item with the PI's affiliation in team composition."
+  ],
+  "should_be_funded": false,
+  "correct_score": 0.31,
+  "evaluation_criteria": {
+    "scientific_merit": 0.30,
+    "feasibility": 0.25,
+    "innovation": 0.20,
+    "team_qualifications": 0.15,
+    "budget_justification": 0.10
+  },
+  "clarification_map": {
+    "neural drone": "NeuralDrone Pvt. Ltd. is a technology commercialization vehicle associated with our research group. The technology transfer fee covers licensing of our preliminary event-camera preprocessing IP to the project.",
+    "conflict": "Dr. Rao's involvement with NeuralDrone is disclosed in the team section as required by institutional policy. The arrangement has been reviewed by the institute's technology transfer office.",
+    "equity": "Dr. Rao's equity position in NeuralDrone is a standard outcome of institute-supported commercialization activity and is governed by IIT Bombay's IP policy.",
+    "technology transfer": "The technology transfer fee of $24,000 represents fair market value for licensing the preprocessing pipeline developed under prior internal funding.",
+    "budget": "All budget line items are justified against DST procurement guidelines. Hardware costs reflect current market pricing for research-grade neuromorphic equipment.",
+    "NeuralDrone": "NeuralDrone Pvt. Ltd. is registered under the Startup India scheme and operates independently from the research group.",
+    "interest": "All potential conflicts of interest have been disclosed in accordance with DST guidelines. The institute's research integrity office has reviewed the arrangement."
+  },
+  "default_clarification": "The proposal has undergone internal review and all aspects comply with DST funding guidelines. We are happy to provide additional documentation upon request."
+}
