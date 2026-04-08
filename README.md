@@ -5,7 +5,6 @@ colorFrom: blue
 colorTo: indigo
 sdk: docker
 pinned: false
-base_path: /web
 ---
 
 # 🏛️ Grant Proposal Review Environment
