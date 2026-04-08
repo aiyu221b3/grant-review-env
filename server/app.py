@@ -4,7 +4,6 @@ from openenv_core.env_server import create_app
 from environment.env import GrantReviewEnv
 from environment.models import GrantReviewAction, GrantProposalObservation
 
-env = GrantReviewEnv(task_name="easy")
 app = create_app(env, GrantReviewAction, GrantProposalObservation)
 
 def main():
