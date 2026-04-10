@@ -17,7 +17,14 @@ Scoring:
 
 from typing import Dict, Any
 
-
+def normalize_to_strict_range(score: float) -> float:
+    """
+    Nudges scores of 0.0 to 0.01 and 1.0 to 0.99.
+    Ensures compliance with strictly (0, 1) requirements.
+    """
+    epsilon = 0.01
+    return max(epsilon, min(score, 1.0 - epsilon))
+    
 def grade_easy(episode_state: Dict[str, Any]) -> float:
     """
     Deterministic grader for easy task.
@@ -60,4 +67,5 @@ def grade_easy(episode_state: Dict[str, Any]) -> float:
     if decision == "approve" and step_count <= 4:
         score += 0.1
 
-    return round(min(max(score, 0.0), 1.0), 4)
+
+    return normalize_to_strict_range(final_score)
