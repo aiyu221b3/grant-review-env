@@ -72,4 +72,6 @@ def grade_medium(episode_state: Dict[str, Any]) -> float:
     if decision == "reject" and step_count <= 4:
         score += 0.15
 
- return normalize_to_strict_range(final_score)
+    # Calculate raw score, bound to [0, 1], then normalize to strictly (0, 1)
+    raw_score = round(min(max(score, 0.0), 1.0), 4)
+    return normalize_to_strict_range(raw_score)
