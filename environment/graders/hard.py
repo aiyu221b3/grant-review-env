@@ -26,6 +26,14 @@ Scoring:
 
 from typing import Dict, Any
 
+def normalize_to_strict_range(score: float) -> float:
+    """
+    Nudges scores of 0.0 to 0.01 and 1.0 to 0.99.
+    Ensures compliance with strictly (0, 1) requirements.
+    """
+    epsilon = 0.01
+    return max(epsilon, min(score, 1.0 - epsilon))
+
 
 def grade_hard(episode_state: Dict[str, Any]) -> float:
     """
@@ -78,4 +86,6 @@ def grade_hard(episode_state: Dict[str, Any]) -> float:
     if "conflict_of_interest" in flaws_detected and budget_requested and team_requested:
         score += 0.10
 
-    return round(min(max(score, 0.0), 1.0), 4)
+    # Calculate raw score, bound to [0, 1], then normalize to strictly (0, 1)
+    raw_score = round(min(max(score, 0.0), 1.0), 4)
+    return normalize_to_strict_range(raw_score)
