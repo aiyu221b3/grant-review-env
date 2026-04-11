@@ -8,11 +8,7 @@ from enum import Enum
 from typing import Dict, List, Optional
 from pydantic import BaseModel, Field
 
-
-# ---------------------------------------------------------------------------
-# Enums
-# ---------------------------------------------------------------------------
-
+# enums for strict typing so the llm doesn't make up random actions
 class ActionType(str, Enum):
     REQUEST_METHODOLOGY = "request_methodology"
     REQUEST_BUDGET = "request_budget"
@@ -37,67 +33,54 @@ class Difficulty(str, Enum):
     HARD = "hard"
 
 
-# ---------------------------------------------------------------------------
-# Observation Model
-# What the agent sees at each step
-# ---------------------------------------------------------------------------
-
+# observation model. this is what the agent actually sees. 
+# we hide the full proposal at first.
 class GrantProposalObservation(BaseModel):
-    """
-    Partial observation of the grant proposal.
-    Agent starts with abstract only.
-    Each action unlocks more sections.
-    """
-    # Always visible
+    # agent always gets to see these
     abstract: str = Field(..., description="Proposal abstract — always visible")
     title: str = Field(..., description="Proposal title")
     requested_amount: float = Field(..., description="Funding amount requested in USD")
 
-    # Unlocked progressively via actions
+    # these start empty. agent has to use actions to unlock them.
     methodology: Optional[str] = Field(None, description="Methodology section — unlocked by REQUEST_METHODOLOGY")
     budget_breakdown: Optional[Dict[str, float]] = Field(None, description="Budget breakdown — unlocked by REQUEST_BUDGET")
     team_composition: Optional[List[str]] = Field(None, description="Team members and roles — unlocked by REQUEST_TEAM")
     references: Optional[List[str]] = Field(None, description="References — unlocked by REQUEST_REFERENCES")
 
-    # Applicant response to last clarification request
+    # if agent asks something, the applicant's reply goes here
     clarification_response: Optional[str] = Field(None, description="Applicant response to last clarification")
 
-    # State tracking
+    # tracking stuff so agent knows how much time it has left
     actions_remaining: int = Field(..., description="Remaining actions before forced decision")
     sections_unlocked: List[str] = Field(default_factory=list, description="Which sections agent has unlocked")
     step_number: int = Field(..., description="Current step in episode")
     last_action_error: Optional[str] = Field(None, description="Error from last action if any")
 
-    # Rubric hints (always visible — agent knows what it's evaluating against)
+    # giving the agent the rubric so it knows what we want it to grade on
     evaluation_criteria: Dict[str, float] = Field(
         default_factory=dict,
         description="Rubric criteria and their weights"
     )
 
 
-# ---------------------------------------------------------------------------
-# Action Model
-# What the agent can do
-# ---------------------------------------------------------------------------
-
+# action model. what the agent can do. optionals because it doesn't 
+# always need to justify simply asking for the budget.
 class GrantReviewAction(BaseModel):
-    """
-    Agent action in the grant review environment.
-    Either request more information or make a final decision.
-    """
     action_type: ActionType = Field(..., description="Type of action to take")
 
-    # Only used when action_type is REQUEST_CLARIFICATION
+    # only used when asking a direct question
     clarification_question: Optional[str] = Field(
         None,
         description="Specific question to ask applicant — only for REQUEST_CLARIFICATION"
     )
 
-    # Only used when action_type is APPROVE or REJECT
+    # only needed when making the final call
     justification: Optional[str] = Field(
         None,
         description="Reasoning for funding decision — only for APPROVE or REJECT"
     )
+    
+    # keeping confidence bounded between 0 and 1 for easy math later
     confidence: Optional[float] = Field(
         None,
         ge=0.0,
@@ -106,20 +89,13 @@ class GrantReviewAction(BaseModel):
     )
 
 
-# ---------------------------------------------------------------------------
-# Reward Model
-# Partial progress signal throughout episode
-# ---------------------------------------------------------------------------
-
+# reward model. breaking down the score so we know exactly why 
+# the agent got points instead of just giving a single number.
 class GrantReviewReward(BaseModel):
-    """
-    Reward signal per step.
-    Not just binary end-of-episode — rewards partial progress.
-    """
-    # Step reward
+    # the actual points given this turn
     step_reward: float = Field(..., description="Reward for this specific step")
 
-    # Breakdown for interpretability
+    # breaking it down for debugging
     information_gain: float = Field(
         0.0,
         description="Reward for unlocking a section that contained relevant signal"
@@ -137,15 +113,11 @@ class GrantReviewReward(BaseModel):
         description="Final reward for correct/incorrect funding decision — non-zero only at episode end"
     )
 
-    # Running total
+    # tracking total score so far
     cumulative_reward: float = Field(..., description="Total reward accumulated so far")
 
 
-# ---------------------------------------------------------------------------
-# Step Result
-# What env.step() returns
-# ---------------------------------------------------------------------------
-
+# standard step result for openenv.
 class StepResult(BaseModel):
     observation: GrantProposalObservation
     reward: float
