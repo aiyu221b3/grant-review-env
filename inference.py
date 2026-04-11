@@ -22,14 +22,11 @@ from openai import OpenAI
 from environment.env import GrantReviewEnv
 from environment.models import ActionType, GrantReviewAction
 
-# ---------------------------------------------------------------------------
-# Configuration
-# ---------------------------------------------------------------------------
 
 API_KEY = os.getenv("HF_TOKEN") or os.getenv("API_KEY")
 API_BASE_URL = os.getenv("API_BASE_URL", "https://router.huggingface.co/v1")
 MODEL_NAME = os.getenv("MODEL_NAME", "Qwen/Qwen2.5-72B-Instruct")
-TASK_NAME = os.getenv("GRANT_REVIEW_TASK", "easy")
+TASK_NAME = os.getenv("GRANT_REVIEW_TASK", "easy") # setting default task to easy
 BENCHMARK = "grant-review-env"
 MAX_STEPS = 8
 TEMPERATURE = 0.3
@@ -68,9 +65,6 @@ SYSTEM_PROMPT = textwrap.dedent("""
 """).strip()
 
 
-# ---------------------------------------------------------------------------
-# Logging — strict format, do not modify
-# ---------------------------------------------------------------------------
 
 def log_start(task: str, env: str, model: str) -> None:
     print(f"[START] task={task} env={env} model={model}", flush=True)
@@ -82,7 +76,7 @@ def log_step(step: int, action: str, reward: float, done: bool, error: Optional[
     print(
         f"[STEP] step={step} action={action} reward={reward:.2f} done={done_val} error={error_val}",
         flush=True,
-    )
+    ) # we're turning it all to json format for simplicity
 
 
 def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> None:
@@ -90,19 +84,16 @@ def log_end(success: bool, steps: int, score: float, rewards: List[float]) -> No
     print(
         f"[END] success={str(success).lower()} steps={steps} score={score:.3f} rewards={rewards_str}",
         flush=True,
-    )
+    ) 
 
 
-# ---------------------------------------------------------------------------
-# Agent helpers
-# ---------------------------------------------------------------------------
-
+# idea here is to show the agent only the previous 4 actions to not overwhelm it. 
 def build_user_prompt(observation_dict: dict, step: int, history: List[str]) -> str:
     history_block = "\n".join(history[-4:]) if history else "None"
     obs_summary = json.dumps({
         k: v for k, v in observation_dict.items()
         if v is not None and k != "evaluation_criteria"
-    }, indent=2)
+    }, indent=2) # cleaning up output for readability
 
     return textwrap.dedent(f"""
         Step: {step}
@@ -138,7 +129,7 @@ def get_agent_action(
             stream=False,
         )
         raw = (completion.choices[0].message.content or "").strip()
-        # Strip markdown fences if present
+        # llms wrap outputs in md, so we remove that and load json
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
@@ -151,17 +142,14 @@ def get_agent_action(
             action_type=ActionType.REJECT,
             justification="Failed to parse action — defaulting to reject.",
             confidence=0.1
-        )
+        ) # this is for safety. if agent returns an invalid json, we reject.
 
 
-# ---------------------------------------------------------------------------
-# Main
-# ---------------------------------------------------------------------------
 
 def run_episode(task_name: str) -> None:
     client = OpenAI(base_url=API_BASE_URL, api_key=API_KEY)
     env = GrantReviewEnv(task_name=task_name)
-
+    # we start tracking state variables
     history: List[str] = []
     rewards: List[float] = []
     steps_taken = 0
@@ -171,53 +159,53 @@ def run_episode(task_name: str) -> None:
     log_start(task=task_name, env=BENCHMARK, model=MODEL_NAME)
 
     try:
-        result = env.reset()
+        result = env.reset() # initialize environment. we sample the true state from distribution.
 
         for step in range(1, MAX_STEPS + 1):
             if result.done:
                 break
-
-            obs_dict = result.observation.model_dump()
+            # here the agent gets the observation as input, then it decides on an action.
+            obs_dict = result.observation.model_dump() # emission function 
             action = get_agent_action(client, obs_dict, step, history)
             action_str = action.action_type.value
+            # action is applied to environment, and we get the reward.
+            result = env.step(action) 
 
-            result = env.step(action)
-
-            reward = result.reward or 0.0
+            reward = result.reward or 0.0 # we get the reward.
             done = result.done
-            error = result.info.get("error")
+            error = result.info.get("error") 
 
-            rewards.append(reward)
+            rewards.append(reward) # now, we track the metrics: rewards, steps taken, and error
             steps_taken = step
 
             log_step(step=step, action=action_str, reward=reward, done=done, error=error)
 
             history.append(
                 f"Step {step}: {action_str} -> reward {reward:+.2f}"
-            )
+            ) # constructing ht here
 
             if done:
                 break
 
-        # Score = cumulative reward normalized to [0, 1]
-        # Max possible reward = CORRECT_DECISION + FLAW_BONUS + CONFIDENCE_BONUS
-        max_possible = 1.0 + 0.2 + (0.25 * 2) + (0.15 * 4)  # roughly 2.5
+        # now, we calculate the score! 
+        max_possible = 1.0 + 0.2 + (0.25 * 2) + (0.15 * 4)  # correct decision + flaw bonus + confidence bonus
         raw_score = sum(rewards)
-        score = min(max(raw_score / max_possible, 0.0), 1.0)
+        score = raw_score / max_possible
+        score = min(max(score, 0.001), 0.999) # bound the score to be between 0 and 1.
         success = score >= SUCCESS_SCORE_THRESHOLD
 
     except Exception as exc:
         print(f"[DEBUG] Episode error: {exc}", flush=True)
     finally:
         env.close()
-        log_end(success=success, steps=steps_taken, score=score, rewards=rewards)
+        log_end(success=success, steps=steps_taken, score=score, rewards=rewards) # cleaning up env.
 
 
 def main():
     """Run inference on all three tasks."""
     tasks = ["easy", "medium", "hard"]
     for task in tasks:
-        run_episode(task_name=task)
+        run_episode(task_name=task) # running episode 
 
 
 if __name__ == "__main__":
