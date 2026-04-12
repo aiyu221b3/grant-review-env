@@ -269,7 +269,7 @@ openenv push <your_huggingface_username>/grant-review-env
 |---|---|---|---|
 | Easy | 5 | 0.646 | ✅ |
 | Medium | 5 | 0.567 | ✅ |
-| Hard | 4 | 0.000 | ❌ |
+| Hard | 4 | 0.001 | ❌ |
 
 *Baseline agent: `Qwen/Qwen2.5-7B-Instruct` via HuggingFace router.*
 
